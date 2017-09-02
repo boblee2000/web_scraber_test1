@@ -52,10 +52,31 @@ def download_page(url):
 
 def parse_html(html):
     soup = BeautifulSoup(html, "lxml")
+    print type(soup)
     movie_list_soup = soup.find('blockquote', attrs={'class':re.compile('messageText\s+SelectQuoteContainer.*?')})
-    for child in movie_list_soup.children:
-        if isinstance(child.next_sibling, element.NavigableString):
-            print child.next_sibling
+    print len(movie_list_soup.contents)
+    for kk in movie_list_soup.children:
+        ##print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
+        print kk
+        #print type(kk)
+        if not isinstance(kk, element.NavigableString):
+            print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+            try:
+                if 'bbCodeBlock' in kk['class']:
+                    print "hhhhhhhhhhhh"
+            except(KeyError):
+                pass
+
+            try:
+                if 'externalLink' in kk['class']:
+                    print 'bbbbbbbbbbbbbbbbbb'
+            except(KeyError):
+                pass
+    #for child in movie_list_soup.children:
+    #for child in kkk.next_siblings:
+    #print child
+        ##if isinstance(child.next_sibling, element.NavigableString):
+          ##  print child.next_sibling
     ##print movie_list_soup.prettify()
     return None
     
