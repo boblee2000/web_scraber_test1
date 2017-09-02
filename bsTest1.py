@@ -8,7 +8,7 @@
 import codecs
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, element
 import re
 
 DOWNLOAD_URL = 'http://movie.douban.com/top250/'
@@ -54,8 +54,9 @@ def parse_html(html):
     soup = BeautifulSoup(html, "lxml")
     movie_list_soup = soup.find('blockquote', attrs={'class':re.compile('messageText\s+SelectQuoteContainer.*?')})
     for child in movie_list_soup.children:
-        print child
-    print movie_list_soup.prettify()
+        if isinstance(child.next_sibling, element.NavigableString):
+            print child.next_sibling
+    ##print movie_list_soup.prettify()
     return None
     
 """
