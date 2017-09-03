@@ -7,8 +7,10 @@ import requests
 from bs4 import BeautifulSoup
 
 DOWNLOAD_URL = 'http://bbs.comefromchina.com/forums/5/'
+FILTER = 1
 postNumber = 0
-
+publisher = ['deepthroat']
+poster = ['deepthroat']
 
 def download_page(url):
     print url
@@ -17,7 +19,7 @@ def download_page(url):
     }).content
 
 def parse_post(html):
-    global postNumber
+    global postNumber,poster
     soup = BeautifulSoup(html, "lxml")
     title = soup.find('body', attrs={'class': 'node5'}).find('div', attrs={'class': 'titleBar'})
     print "Post_Title ------->[%s]"%title.h1.string
@@ -25,6 +27,8 @@ def parse_post(html):
     i = 0
     QuoteText = None
     for list in root.find_all('li', attrs={'id': re.compile(r'post-\d+'), 'class':'message'}):
+        if FILTER and list['data-author'] not in poster:
+            continue
         postNumber += 1
         print "Post%d Author:%s"%(postNumber, list['data-author'])
         message = list.find('div', attrs={'class':'messageContent'})
@@ -49,14 +53,18 @@ def parse_post(html):
         return 'http://bbs.comefromchina.com/'+next['href']
     else:
         return None
+
 def parse_html(html):
-    global postNumber
+    global postNumber,publisher
+
     soup = BeautifulSoup(html, "lxml")
     root = soup.find('div', attrs={'class':'discussionList'})
     leaf = root.find('ol', attrs={'class':'discussionListItems'})
     for list in leaf.find_all('li', attrs={'id':re.compile(r'thread-\d+')}):
         _, _, id = list['id'].partition('-')
         url = "http://bbs.comefromchina.com/threads/"+id
+        if FILTER and list['data-author'] not in publisher:
+            continue
         print "post-------->"+url
         while url:
             html = download_page(url)
