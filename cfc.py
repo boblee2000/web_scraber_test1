@@ -25,6 +25,14 @@ def parse_post(html):
     for list in root.find_all('li', attrs={'id': re.compile(r'post-\d+'), 'class':'message'}):
         i += 1
         print "Post%d Author:%s"%(i, list['data-author'])
+        quote = list.find_all('div', attrs={'class':'bbCodeBlock'})
+        print "............................................"
+        while quote:
+            
+            print "Quote from %s" % quote['data-author']
+            QuoteText = quote.find('div', attrs={'class':'quote'})
+            print QuoteText.get_text(strip=True)        
+        print "............................................"
         message = list.find('div', attrs={'class':'messageContent'})
         print message.get_text('|', strip=True)
         print "\n\n\n"
